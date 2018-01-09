@@ -6,9 +6,9 @@ namespace Collaboration.Core.Models
 {
     public class Thread
     {
-        public int DocumentId;
         public int ThreadId;
+        public int DocumentId { get; set; }
         public string Title;
-        //public ICollection<int> PostId;
+        public ICollection<Post> Posts;
     }
 }

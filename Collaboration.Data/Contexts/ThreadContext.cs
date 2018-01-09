@@ -10,8 +10,6 @@ namespace Collaboration.Data.Contexts
 
         public DbSet<Thread> Threads { get; set; }
         public DbSet<Post> Posts { get; set; }
-        public DbSet<Document> Documents { get; set; }
-        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
