@@ -2,6 +2,7 @@
 using Collaboration.Data.Contexts;
 using System;
 using System.Collections.Generic;
+using System;
 
 namespace Collaboration.Data.Seed
 {
@@ -13,6 +14,7 @@ namespace Collaboration.Data.Seed
             db.Database.EnsureCreated();
 
             //Posts
+            DateTime now = DateTime.Now.AddMinutes(120.0);
             var posts = new List<Post>
             {
                 new Post { Content = "1. Test Content 0", ThreadId = 0, UserName="Test"},

@@ -27,6 +27,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Collaboration.Messaging\Collaboration.Messaging.csproj" />
+    <ProjectReference Include="..\Collaboration.Core\Collaboration.Core.csproj" />
+    <ProjectReference Include="..\Collaboration.Data\Collaboration.Data.csproj" />
   </ItemGroup>
 
 </Project>
