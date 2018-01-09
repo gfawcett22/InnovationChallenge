@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collaboration.Api", "Collaboration.Api\Collaboration.Api.csproj", "{2EC19049-1D7F-4D50-AF14-EC3795122C1F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collaboration.Messaging", "Collaboration.Messaging\Collaboration.Messaging.csproj", "{04ECF6DD-E9AD-4445-B8B2-5F92D33E9577}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collaboration.Core", "Collaboration.Core\Collaboration.Core.csproj", "{9A404B48-95EE-4E8E-BCA8-E16D5AFB8092}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{2EC19049-1D7F-4D50-AF14-EC3795122C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EC19049-1D7F-4D50-AF14-EC3795122C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EC19049-1D7F-4D50-AF14-EC3795122C1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04ECF6DD-E9AD-4445-B8B2-5F92D33E9577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04ECF6DD-E9AD-4445-B8B2-5F92D33E9577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04ECF6DD-E9AD-4445-B8B2-5F92D33E9577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04ECF6DD-E9AD-4445-B8B2-5F92D33E9577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A404B48-95EE-4E8E-BCA8-E16D5AFB8092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A404B48-95EE-4E8E-BCA8-E16D5AFB8092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A404B48-95EE-4E8E-BCA8-E16D5AFB8092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A404B48-95EE-4E8E-BCA8-E16D5AFB8092}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
