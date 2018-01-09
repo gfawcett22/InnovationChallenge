@@ -19,14 +19,16 @@ namespace Collaboration.Data.Repositories
         }
         public IEnumerable<Post> GetPosts() => _context.Posts.ToList();
 
+        public Post GetPost(int postId) => _context.Posts.FirstOrDefault(p => p.PostId == postId);
+
+        public IEnumerable<Post> GetPostsForThread(int threadId) => _context.Posts.Where(p => p.ThreadId == threadId);
+
         public void AddPost(Post post)
         {
             _context.Posts.Add(post);
         }
 
         public bool PostExists(int postId) => _context.Posts.Any(d => d.PostId == postId);
-
-        public Post GetPost(int postId) => _context.Posts.FirstOrDefault(d => d.PostId == postId);
 
         public void UpdatePost(Post post)
         {

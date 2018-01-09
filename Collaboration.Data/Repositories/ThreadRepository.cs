@@ -18,13 +18,14 @@ namespace Collaboration.Data.Repositories
             _context = context;
         }
         public IEnumerable<Thread> GetThreads() => _context.Threads.ToList();
+        public Thread GetThread(int threadId) => _context.Threads.FirstOrDefault(t => t.ThreadId == threadId);
+
+        public IEnumerable<Thread> GetThreadsForDocument(int documentId) => _context.Threads.Where(t => t.DocumentId == documentId);
 
         public void AddThread(Thread post)
         {
             _context.Threads.Add(post);
         }
-
-        public Thread GetThread(int documentId) => _context.Threads.FirstOrDefault(c => c.DocumentId == documentId);
 
         public void UpdateThread(Thread post)
         {
