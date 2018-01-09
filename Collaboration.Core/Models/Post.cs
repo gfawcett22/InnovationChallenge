@@ -4,10 +4,11 @@ namespace Collaboration.Core.Models
 {
     public class Post
     {
-        public int ThreadId;
-        //public int PostId;
+        public int PostId;
+        public int ThreadId { get; set; }
+        public Thread Thread;
         public string Content;
-        public int UserId;
+        public string UserName;
         public DateTime TimeStamp;
     }
 }
