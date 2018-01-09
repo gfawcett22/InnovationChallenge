@@ -6,11 +6,12 @@ namespace Collaboration.Core.Data
     public interface IPostRepository
     {
         IEnumerable<Post> GetPosts();
-        Post GetPost(int PostId);
-        void AddPost(Post Post);
-        void DeletePost(Post Post);
-        void UpdatePost(Post Post);
-        bool PostExists(int PostId);
+        Post GetPost(int postId);
+        IEnumerable<Post> GetPostsForThread(int threadId);
+        void AddPost(Post post);
+        void DeletePost(Post post);
+        void UpdatePost(Post post);
+        bool PostExists(int postId);
         bool Save();
     }
 }

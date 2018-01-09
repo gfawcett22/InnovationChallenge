@@ -6,6 +6,8 @@ namespace Collaboration.Core.Data
     public interface IThreadRepository
     {
         IEnumerable<Thread> GetThreads();
+        Thread GetThread(int threadId);
+        IEnumerable<Thread> GetThreadsForDocument(int documentId);
         void AddThread(Thread thread);
         void DeleteThread(Thread thread);
         void UpdateThread(Thread thread);
