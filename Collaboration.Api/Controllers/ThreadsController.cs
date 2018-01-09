@@ -13,8 +13,8 @@ namespace Collaboration.Api.Controllers
     {
         private static DbContextOptions<ThreadContext> options = new DbContextOptions<ThreadContext>();
         private static ThreadContext context = new ThreadContext(options);
-        private static ThreadRepo threadRepo = new ThreadRepo(context);
-        private static PostRepo postRepo = new PostRepo(context);
+        //private static ThreadRepository threadRepo = new ThreadRepo(context);
+        //private static PostRepository postRepo = new PostRepo(context);
 
         // Not all of these may be necessary. Some may be part of SignalR hub?
 
@@ -31,7 +31,9 @@ namespace Collaboration.Api.Controllers
         [Route("api/Threads/Get/{docID:int}")]
         public IEnumerable<Thread> GetThreads(int docID)
         {
-            return threadRepo.GetThreads(docID);
+            //return threadRepo.GetThreads(docID);
+            return new List<Thread>();
+
         }
 
         // Get all posts for a thread
@@ -39,7 +41,8 @@ namespace Collaboration.Api.Controllers
         [Route("api/Threads/GetPosts/{threadID:int}")]
         public IEnumerable<Post> GetPosts(int threadID)
         {
-            return postRepo.GetPosts(threadID);
+            //return postRepo.GetPosts(threadID);
+            return new List<Post>();
         }
 
         // Create new discussion thread
@@ -61,7 +64,6 @@ namespace Collaboration.Api.Controllers
             Post post = new Post();
             post.ThreadId = threadID;
             post.Content = message;
-            post.UserId = userID;
             post.TimeStamp = DateTime.Now;
 
             context.Posts.Add(post);
