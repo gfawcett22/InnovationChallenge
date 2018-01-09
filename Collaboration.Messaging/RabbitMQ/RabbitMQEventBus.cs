@@ -23,13 +23,14 @@ namespace Collaboration.Messaging.RabbitMQ
         private IModel _consumerChannel;
         private string _queueName;
 
-        public RabbitMQEventBus(IRabbitMQConnection connection, IEventBusSubscriptionsManager subManager, string queueName = null, IServiceProvider sv = null)
+        public RabbitMQEventBus(IRabbitMQConnection connection, IEventBusSubscriptionsManager subsManager, string queueName = "", IServiceProvider sv = null)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-            _subsManager = subManager ?? new InMemoryEventBusSubscriptionsManager();
+            _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
             _queueName = queueName;
             _consumerChannel = CreateConsumerChannel();
             _sv = sv;
+            _subsManager.OnEventRemoved += SubsManager_OnEventRemoved;
         }
 
         private void SubsManager_OnEventRemoved(object sender, string eventName)
@@ -120,6 +121,7 @@ namespace Collaboration.Messaging.RabbitMQ
             {
                 _consumerChannel.Dispose();
             }
+            _subsManager.Clear();
         }
 
         private IModel CreateConsumerChannel()
@@ -135,7 +137,7 @@ namespace Collaboration.Messaging.RabbitMQ
                                  type: "direct");
 
             channel.QueueDeclare(queue: _queueName,
-                                 durable: true,
+                                 durable: true,                                 
                                  exclusive: false,
                                  autoDelete: false,
                                  arguments: null);
@@ -170,9 +172,11 @@ namespace Collaboration.Messaging.RabbitMQ
                 var subscriptions = _subsManager.GetHandlersForEvent(eventName);
                 foreach (var subscription in subscriptions)
                 {
-                    var handler = _sv.GetService(subscription.HandlerType) as IDynamicIntegrationEventHandler;
-                    dynamic eventData = JObject.Parse(message);
-                    await handler.Handle(eventData);
+                    var eventType = _subsManager.GetEventTypeByName(eventName);
+                    var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
+                    var handler = _sv.GetService(subscription.HandlerType);
+                    var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
+                    await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
                 }
             }
 

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Collaboration.Api.IntegrationEvents.EventHandling;
+using Collaboration.Api.IntegrationEvents.Events;
 using Collaboration.Messaging.Models;
 using Collaboration.Messaging.Models.Abstractions;
 using Collaboration.Messaging.RabbitMQ;
@@ -37,6 +39,7 @@ namespace Collaboration.Api
                     HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME") ?? "rabbit",
                     UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest",
                     Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest",
+                    Uri = new Uri("amqp://guest@dev-030760:5672")
                 };
                 return new RabbitMQConnection(factory);
             });
@@ -67,12 +70,13 @@ namespace Collaboration.Api
                     retryCount = int.Parse(Configuration["EventBusRetryCount"]);
                 }
 
-                return new RabbitMQEventBus(rabbitMQPersistentConnection, eventBusSubcriptionsManager);
+                return new RabbitMQEventBus(rabbitMQPersistentConnection, eventBusSubcriptionsManager, "collaboration");
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
             // Add Event Handlers Here
+            services.AddTransient<ThreadUpdateIntegrationEventHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,7 +98,7 @@ namespace Collaboration.Api
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
             // Subscribe to events and put the handler here
-            // eventBus.Subscribe<ThreadChangeEvent, ThreadChangeIntegrationEventHandler>();
+            eventBus.Subscribe<ThreadUpdateIntegrationEvent, ThreadUpdateIntegrationEventHandler>();
         }
     }
 }

@@ -47,8 +47,7 @@ namespace Collaboration.Messaging.Models
                 _handlers[eventName].Add(SubscriptionInfo.Typed(handlerType));
             }
         }
-
-
+        
         public void RemoveSubscription<T, TH>()
             where TH : IIntegrationEventHandler<T>
             where T : IntegrationEvent
@@ -57,8 +56,7 @@ namespace Collaboration.Messaging.Models
             var eventName = GetEventKey<T>();
             DoRemoveHandler(eventName, handlerToRemove);
         }
-
-
+        
         private void DoRemoveHandler(string eventName, SubscriptionInfo subsToRemove)
         {
             if (subsToRemove != null)
