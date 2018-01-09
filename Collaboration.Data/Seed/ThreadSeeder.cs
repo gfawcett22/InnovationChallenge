@@ -1,5 +1,6 @@
 ﻿using Collaboration.Core.Models;
 using Collaboration.Data.Contexts;
+using System;
 using System.Collections.Generic;
 using System;
 
@@ -12,32 +13,21 @@ namespace Collaboration.Data.Seed
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
 
-            //Documents
-            var docList = new List<Document>
-            {
-                new Document { DocumentId = 0, Name = "This is the first document"},
-                new Document { DocumentId = 1, Name = "This is the second document"},
-                new Document { DocumentId = 2, Name = "This is the third document"},
-                new Document { DocumentId = 3, Name = "This is the fourth document"},
-                new Document { DocumentId = 4, Name = "This is the fifth document"}
-            };
-            db.Documents.AddRange(docList);
-
             //Posts
             DateTime now = DateTime.Now.AddMinutes(120.0);
             var posts = new List<Post>
             {
-                new Post { Content = "1. Test Content 0", ThreadId = 0, UserId=0, TimeStamp = now},
-                new Post { Content = "2. Test Content 1", ThreadId = 1, UserId=1, TimeStamp = now.AddMinutes(2)},
-                new Post { Content = "3. Test Content 2", ThreadId = 2, UserId=2, TimeStamp = now.AddMinutes(5)},
-                new Post { Content = "4. Test Content 3", ThreadId = 3, UserId=3, TimeStamp = now.AddMinutes(8)},
-                new Post { Content = "5. Test Content 4", ThreadId = 4, UserId=4, TimeStamp = now.AddMinutes(10)},
-                new Post { Content = "6. Test Content 5", ThreadId = 0, UserId=4, TimeStamp = now.AddMinutes(12)},
-                new Post { Content = "7. Test Content 6", ThreadId = 1, UserId=0, TimeStamp = now.AddMinutes(15)},
-                new Post { Content = "8. Test Content 7", ThreadId = 2, UserId=1, TimeStamp = now.AddMinutes(17)},
-                new Post { Content = "9. Test Content 8", ThreadId = 3, UserId=4, TimeStamp = now.AddMinutes(20)},
-                new Post { Content = "10. Test Content 9", ThreadId = 4, UserId=3, TimeStamp = now.AddMinutes(22)},
-                new Post { Content = "11. Test Content 10", ThreadId = 0, UserId=1, TimeStamp = now.AddMinutes(28)},
+                new Post { Content = "1. Test Content 0", ThreadId = 0, UserName="Test"},
+                new Post { Content = "2. Test Content 1", ThreadId = 1, UserName="Test"},
+                new Post { Content = "3. Test Content 2", ThreadId = 2, UserName="Test"},
+                new Post { Content = "4. Test Content 3", ThreadId = 3, UserName="Test"},
+                new Post { Content = "5. Test Content 4", ThreadId = 4, UserName="Test"},
+                new Post { Content = "6. Test Content 5", ThreadId = 0, UserName="Test"},
+                new Post { Content = "7. Test Content 6", ThreadId = 1, UserName="Test"},
+                new Post { Content = "8. Test Content 7", ThreadId = 2, UserName="Test"},
+                new Post { Content = "9. Test Content 8", ThreadId = 3, UserName="Test"},
+                new Post { Content = "10. Test Content 9", ThreadId = 4, UserName="Test"},
+                new Post { Content = "11. Test Content 10", ThreadId = 0, UserName="Test"},
             };
             db.Posts.AddRange(posts);
 
@@ -52,16 +42,7 @@ namespace Collaboration.Data.Seed
             };
             db.Threads.AddRange(threads);
 
-            //Users
-            var users = new List<User>
-            {
-                new User { UserId=0, UserName = "Garron"},
-                new User { UserId=1, UserName = "Luke"},
-                new User { UserId=2, UserName = "Elizabeth"},
-                new User { UserId=3, UserName = "Steven"},
-                new User { UserId=4, UserName = "Maneesha"}
-            };
-            db.Users.AddRange(users);
+            db.SaveChanges();
         }
     }
 }
