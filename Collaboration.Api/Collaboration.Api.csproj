@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-alpha1-final" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Http" Version="0.0.1-alpha" />

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.SignalR;
+using Collaboration.Api.Hubs;
 
 namespace Collaboration.Api
 {
@@ -24,6 +26,7 @@ namespace Collaboration.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +38,12 @@ namespace Collaboration.Api
             }
 
             app.UseMvc();
+
+            app.UseStaticFiles();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<CollaborationHub>("CollaborationHub");
+            });
         }
     }
 }
