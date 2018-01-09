@@ -5,16 +5,21 @@ using Microsoft.EntityFrameworkCore;
 using Collaboration.Core.Models;
 using Collaboration.Data.Repositories;
 using Collaboration.Data.Contexts;
+using Collaboration.Core.Data;
 
 namespace Collaboration.Api.Controllers
 {
     [Route("api/Threads")]
     public class ThreadsController : Controller
     {
-        private static DbContextOptions<ThreadContext> options = new DbContextOptions<ThreadContext>();
-        private static ThreadContext context = new ThreadContext(options);
-        //private static ThreadRepository threadRepo = new ThreadRepo(context);
-        //private static PostRepository postRepo = new PostRepo(context);
+        private static IThreadRepository _threadRepo;
+        private static IPostRepository _postRepo;
+
+        public ThreadsController(IThreadRepository threadRepo, IPostRepository postRepo)
+        {
+            _threadRepo = threadRepo;
+            _postRepo = postRepo;
+        }
 
         // Not all of these may be necessary. Some may be part of SignalR hub?
 
@@ -31,8 +36,7 @@ namespace Collaboration.Api.Controllers
         [Route("api/Threads/Get/{docID:int}")]
         public IEnumerable<Thread> GetThreads(int docID)
         {
-            //return threadRepo.GetThreads(docID);
-            return new List<Thread>();
+            return _threadRepo.GetThread(docID);
 
         }
 
