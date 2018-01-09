@@ -2,23 +2,19 @@
 using Collaboration.Messaging.Models.Abstractions;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Collaboration.Api.IntegrationEvents.EventHandling
 {
     public class ThreadUpdateIntegrationEventHandler : IIntegrationEventHandler<ThreadUpdateIntegrationEvent>
     {
-        private ILogger _logger;
-        public ThreadUpdateIntegrationEventHandler(ILogger logger)
+        public ThreadUpdateIntegrationEventHandler()
         {
-            _logger = logger;
         }
 
         public async Task Handle(ThreadUpdateIntegrationEvent @event)
         {
-            await Task.Run(() => _logger.LogDebug("Publish received"));
+            await Task.Run(() => Console.WriteLine("Publish received"));
         }
     }
 }

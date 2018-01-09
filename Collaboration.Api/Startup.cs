@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Collaboration.Api.IntegrationEvents.EventHandling;
 using Collaboration.Api.IntegrationEvents.Events;
 using Collaboration.Messaging.Models;
@@ -28,7 +30,7 @@ namespace Collaboration.Api
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
 
@@ -54,6 +56,11 @@ namespace Collaboration.Api
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
+
+            var container = new ContainerBuilder();
+            container.Populate(services);
+
+            return new AutofacServiceProvider(container.Build());
         }
 
         private void RegisterEventBus(IServiceCollection services)
@@ -62,6 +69,7 @@ namespace Collaboration.Api
             {
                 var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQConnection>();
                 var logger = sp.GetRequiredService<ILogger<RabbitMQEventBus>>();
+                var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
                 var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
                 var retryCount = 5;
@@ -70,13 +78,14 @@ namespace Collaboration.Api
                     retryCount = int.Parse(Configuration["EventBusRetryCount"]);
                 }
 
-                return new RabbitMQEventBus(rabbitMQPersistentConnection, eventBusSubcriptionsManager, "collaboration");
+                return new RabbitMQEventBus(rabbitMQPersistentConnection, eventBusSubcriptionsManager, iLifetimeScope, "collaboration");
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
             // Add Event Handlers Here
             services.AddTransient<ThreadUpdateIntegrationEventHandler>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

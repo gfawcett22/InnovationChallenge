@@ -1,4 +1,5 @@
-﻿using Collaboration.Messaging.Models;
+﻿using Autofac;
+using Collaboration.Messaging.Models;
 using Collaboration.Messaging.Models.Abstractions;
 using Collaboration.Messaging.RabbitMQ.Abstractions;
 using Newtonsoft.Json;
@@ -16,6 +17,9 @@ namespace Collaboration.Messaging.RabbitMQ
     public class RabbitMQEventBus : IEventBus, IDisposable
     {
         const string BROKER_NAME = "collaboration_event_bus";
+        private readonly string AUTOFAC_SCOPE_NAME = "collaboration_event_bus";
+
+        private readonly ILifetimeScope _autofac;
 
         private IRabbitMQConnection _connection;
         private readonly IEventBusSubscriptionsManager _subsManager;
@@ -23,11 +27,12 @@ namespace Collaboration.Messaging.RabbitMQ
         private IModel _consumerChannel;
         private string _queueName;
 
-        public RabbitMQEventBus(IRabbitMQConnection connection, IEventBusSubscriptionsManager subsManager, string queueName = "", IServiceProvider sv = null)
+        public RabbitMQEventBus(IRabbitMQConnection connection, IEventBusSubscriptionsManager subsManager, ILifetimeScope autofac, string queueName = "", IServiceProvider sv = null)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
             _queueName = queueName;
+            _autofac = autofac;
             _consumerChannel = CreateConsumerChannel();
             _sv = sv;
             _subsManager.OnEventRemoved += SubsManager_OnEventRemoved;
@@ -169,17 +174,19 @@ namespace Collaboration.Messaging.RabbitMQ
         {
             if (_subsManager.HasSubscriptionsForEvent(eventName))
             {
-                var subscriptions = _subsManager.GetHandlersForEvent(eventName);
-                foreach (var subscription in subscriptions)
+                using (var scope = _autofac.BeginLifetimeScope(AUTOFAC_SCOPE_NAME))
                 {
-                    var eventType = _subsManager.GetEventTypeByName(eventName);
-                    var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
-                    var handler = _sv.GetService(subscription.HandlerType);
-                    var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
-                    await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
+                    var subscriptions = _subsManager.GetHandlersForEvent(eventName);
+                    foreach (var subscription in subscriptions)
+                    {
+                        var eventType = _subsManager.GetEventTypeByName(eventName);
+                        var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
+                        var handler = scope.ResolveOptional(subscription.HandlerType);
+                        var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
+                        await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
+                    }
                 }
             }
-
         }
     }
 }
