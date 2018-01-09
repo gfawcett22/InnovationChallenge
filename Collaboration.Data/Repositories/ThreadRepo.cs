@@ -15,6 +15,7 @@ namespace Collaboration.Data.Repositories
         {
             _context = context;
         }
-        public IEnumerable<Thread> GetThreads() => _context.Threads.ToList();
+        public IEnumerable<Thread> GetThreads(int DocumentId) => _context.Threads.Where(d => d.DocumentId == DocumentId);
+        public bool ThreadsExists(int DocumentId) => _context.Threads.Any(t => t.DocumentId == DocumentId);
     }
 }
