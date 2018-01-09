@@ -16,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.SignalR;
+using Collaboration.Api.Hubs;
 using RabbitMQ.Client;
 
 namespace Collaboration.Api
@@ -33,6 +35,9 @@ namespace Collaboration.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            
+
+            services.AddTransient<ICollaborationService, CollaborationService>();
 
             services.AddSingleton<IRabbitMQConnection>(sp =>
             {
@@ -56,6 +61,8 @@ namespace Collaboration.Api
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
+
+            services.AddSignalR();
 
             var container = new ContainerBuilder();
             container.Populate(services);
@@ -85,7 +92,6 @@ namespace Collaboration.Api
 
             // Add Event Handlers Here
             services.AddTransient<ThreadUpdateIntegrationEventHandler>();
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,6 +104,12 @@ namespace Collaboration.Api
             app.UseCors("CorsPolicy");
 
             app.UseMvc();
+
+            app.UseStaticFiles();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<CollaborationHub>("CollaborationHub");
+            });
 
             ConfigureEventBus(app);
         }

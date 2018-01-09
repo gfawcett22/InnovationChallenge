@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="signalr-client-1.0.0-alpha2-final.js"></script>
+    <script>
+
+        let connection = new signalR.HubConnection("/CollaborationHub");
+
+            
+
+        connection.start().then(
+            () => connection.invoke("Send", "Hello")
+        );
+
+        function getThreads(docId)
+        {
+            connection.invoke("GetThreads", "5");
+
+            let threadSubject = {};
+            connection.on("Threads", thread => {
+                document.getElementById("text").value += "\r\n" + thread;
+                //threadSubject.onNext(thread);
+            });
+            return threadSubject;
+        }
+
+        function sendThread() {
+            connection.invoke("SendThread", 5, "mythread");
+        }
+
+
+
+
+
+        getThreads(5);
+
+        
+
+
+
+    </script>
+</head>
+<body>
+    <button onclick="getThreads(5)">Get Threads</button>
+    <button onclick="sendThread()">Send Thread</button>
+    <textarea id="text"></textarea>
+</body>
+</html>

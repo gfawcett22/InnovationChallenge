@@ -1,4 +1,5 @@
-﻿using Collaboration.Api.IntegrationEvents.Events;
+﻿using Collaboration.Api.Hubs;
+using Collaboration.Api.IntegrationEvents.Events;
 using Collaboration.Messaging.Models.Abstractions;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,13 +9,20 @@ namespace Collaboration.Api.IntegrationEvents.EventHandling
 {
     public class ThreadUpdateIntegrationEventHandler : IIntegrationEventHandler<ThreadUpdateIntegrationEvent>
     {
+        ICollaborationService _collaborationService;
+
         public ThreadUpdateIntegrationEventHandler()
         {
+
+        }
+        public ThreadUpdateIntegrationEventHandler(ICollaborationService collaborationService)
+        {
+            _collaborationService = collaborationService;
         }
 
         public async Task Handle(ThreadUpdateIntegrationEvent @event)
         {
-            await Task.Run(() => Console.WriteLine("Publish received"));
+            await Task.Run(() => _collaborationService.PushOutNewThread(5, "ThreadUpdatingIntEventHandle"));
         }
     }
 }
