@@ -35,7 +35,9 @@ namespace Collaboration.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddSignalR();
+            
+
+            services.AddTransient<ICollaborationService, CollaborationService>();
 
             services.AddSingleton<IRabbitMQConnection>(sp =>
             {
@@ -59,6 +61,8 @@ namespace Collaboration.Api
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
+
+            services.AddSignalR();
 
             var container = new ContainerBuilder();
             container.Populate(services);

@@ -8,13 +8,6 @@ namespace Collaboration.Api.Hubs
 {
     public class CollaborationHub : Hub
     {
-        ICollaborationService _collaborationService = null;
-
-        CollaborationHub(ICollaborationService collaborationService)
-        {
-            _collaborationService = collaborationService;
-        }
-
         public override async Task OnConnectedAsync()
         {
             await Clients.All.InvokeAsync("Threads", $"{Context.ConnectionId} joined");
@@ -34,9 +27,9 @@ namespace Collaboration.Api.Hubs
 
         public Task SendThread(long docId, object thread)
         {
-            return _collaborationService.PushOutNewThread(docId, thread);
-            //Clients.All.InvokeAsync("Threads", "testing");
-            //return Clients.Group(docId.ToString()).InvokeAsync("Threads", "groupTest");
+            //return _collaborationService.PushOutNewThread(docId, thread);
+            Clients.All.InvokeAsync("Threads", "testing");
+            return Clients.Group(docId.ToString()).InvokeAsync("Threads", "groupTest");
         }
 
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Collaboration.Api.Hubs
 {
-    public class CollaborationService
+    public class CollaborationService: ICollaborationService
     {
         private readonly IHubContext<CollaborationHub> _hubContext;
         public CollaborationService(IHubContext<CollaborationHub> hubContext)
