@@ -33,10 +33,10 @@ namespace Collaboration.Api.Controllers
 
         // Get all threads for a document
         [HttpGet]
-        [Route("api/Threads/Get/{docID:int}")]
-        public IEnumerable<Thread> GetThreads(int docID)
+        [Route("/document/{id}")]
+        public IEnumerable<Thread> GetThreads(int docId)
         {
-            return _threadRepo.GetThread(docID);
+            return _threadRepo.GetThreadsForDocument(docId);
 
         }
 
@@ -58,7 +58,6 @@ namespace Collaboration.Api.Controllers
             thread.DocumentId = docID;
             thread.Title = subject;
 
-            context.Threads.Add(thread);
         }
 
         // Create a post on an existing thread
@@ -70,7 +69,6 @@ namespace Collaboration.Api.Controllers
             post.Content = message;
             post.TimeStamp = DateTime.Now;
 
-            context.Posts.Add(post);
         }
         
         /*
