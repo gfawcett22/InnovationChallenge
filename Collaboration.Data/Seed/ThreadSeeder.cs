@@ -33,11 +33,11 @@ namespace Collaboration.Data.Seed
             //Threads
             var threads = new List<Thread>
             {
-                new Thread { DocumentId = 0, ThreadId = 0, Title = "Title for doc 0"},
-                new Thread { DocumentId = 1, ThreadId = 1, Title = "Title for doc 1"},
-                new Thread { DocumentId = 2, ThreadId = 2, Title = "Title for doc 2"},
-                new Thread { DocumentId = 3, ThreadId = 3, Title = "Title for doc 3"},
-                new Thread { DocumentId = 4, ThreadId = 4, Title = "Title for doc 4"},
+                new Thread { DocumentId = 0, Title = "Title for doc 0"},
+                new Thread { DocumentId = 1, Title = "Title for doc 1"},
+                new Thread { DocumentId = 2, Title = "Title for doc 2"},
+                new Thread { DocumentId = 3, Title = "Title for doc 3"},
+                new Thread { DocumentId = 4, Title = "Title for doc 4"},
             };
             db.Threads.AddRange(threads);
 

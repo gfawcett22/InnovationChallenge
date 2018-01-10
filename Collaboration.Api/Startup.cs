@@ -23,6 +23,7 @@ using Collaboration.Data.Repositories;
 using Collaboration.Core.Data;
 using Collaboration.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Collaboration.Data.Seed;
 
 namespace Collaboration.Api
 {
@@ -38,7 +39,6 @@ namespace Collaboration.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<APP_ID> ();
             services.AddMvc();
 
             services.AddDbContext<ThreadContext>(o => o.UseInMemoryDatabase("Threads"));
@@ -97,7 +97,7 @@ namespace Collaboration.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider sv)
         {
             if (env.IsDevelopment())
             {
@@ -114,6 +114,10 @@ namespace Collaboration.Api
             });
 
             ConfigureEventBus(app);
+            using (var db = sv.GetService<ThreadContext>())
+            {
+                ThreadSeeder.Seed(db);
+            }
         }
 
         private void ConfigureEventBus(IApplicationBuilder app)
@@ -124,11 +128,5 @@ namespace Collaboration.Api
             eventBus.Subscribe<ThreadUpdateIntegrationEvent, ThreadUpdateIntegrationEventHandler>();
             eventBus.Subscribe<PostUpdateIntegrationEvent, PostUpdateIntegrationEventHandler>();
         }
-    }
-
-    public class APP_ID
-    {
-        public APP_ID() => Id = new Guid();
-        public Guid Id { get; set; }
     }
 }
