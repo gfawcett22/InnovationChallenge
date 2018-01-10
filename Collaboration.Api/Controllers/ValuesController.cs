@@ -20,7 +20,7 @@ namespace Collaboration.Api.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            var eventMessage = new ThreadUpdateIntegrationEvent(1);
+            var eventMessage = new ThreadUpdateIntegrationEvent(1, 2, "This is a new Thread", null);
 
             _eventBus.Publish(eventMessage);
 
@@ -28,9 +28,12 @@ namespace Collaboration.Api.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("{id}")]
+        [HttpGet("/post")]
         public string Get(int id)
         {
+            var eventMessage = new PostUpdateIntegrationEvent(56, 2, "This is a post", "Garron", DateTime.Now);
+
+            _eventBus.Publish(eventMessage);
             return "value";
         }
 

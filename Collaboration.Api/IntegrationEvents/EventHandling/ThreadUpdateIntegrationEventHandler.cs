@@ -11,10 +11,6 @@ namespace Collaboration.Api.IntegrationEvents.EventHandling
     {
         ICollaborationService _collaborationService;
 
-        public ThreadUpdateIntegrationEventHandler()
-        {
-
-        }
         public ThreadUpdateIntegrationEventHandler(ICollaborationService collaborationService)
         {
             _collaborationService = collaborationService;
@@ -22,7 +18,7 @@ namespace Collaboration.Api.IntegrationEvents.EventHandling
 
         public async Task Handle(ThreadUpdateIntegrationEvent @event)
         {
-            await Task.Run(() => _collaborationService.PushOutNewThread(5, "ThreadUpdatingIntEventHandle"));
+            await _collaborationService.PushOutNewThreadsForDocument(@event.DocumentId);
         }
     }
 }

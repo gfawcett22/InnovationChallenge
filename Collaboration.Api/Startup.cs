@@ -19,6 +19,10 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.SignalR;
 using Collaboration.Api.Hubs;
 using RabbitMQ.Client;
+using Collaboration.Data.Repositories;
+using Collaboration.Core.Data;
+using Collaboration.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace Collaboration.Api
 {
@@ -34,10 +38,13 @@ namespace Collaboration.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<APP_ID> ();
             services.AddMvc();
-            
 
+            services.AddDbContext<ThreadContext>(o => o.UseInMemoryDatabase("Threads"));
             services.AddTransient<ICollaborationService, CollaborationService>();
+            services.AddTransient<IThreadRepository, ThreadRepository>();
+            services.AddTransient<IPostRepository, PostRepository>();
 
             services.AddSingleton<IRabbitMQConnection>(sp =>
             {
@@ -79,12 +86,6 @@ namespace Collaboration.Api
                 var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
                 var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
-                var retryCount = 5;
-                if (!string.IsNullOrEmpty(Configuration["EventBusRetryCount"]))
-                {
-                    retryCount = int.Parse(Configuration["EventBusRetryCount"]);
-                }
-
                 return new RabbitMQEventBus(rabbitMQPersistentConnection, eventBusSubcriptionsManager, iLifetimeScope, "collaboration");
             });
 
@@ -92,6 +93,7 @@ namespace Collaboration.Api
 
             // Add Event Handlers Here
             services.AddTransient<ThreadUpdateIntegrationEventHandler>();
+            services.AddTransient<PostUpdateIntegrationEventHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -120,6 +122,13 @@ namespace Collaboration.Api
 
             // Subscribe to events and put the handler here
             eventBus.Subscribe<ThreadUpdateIntegrationEvent, ThreadUpdateIntegrationEventHandler>();
+            eventBus.Subscribe<PostUpdateIntegrationEvent, PostUpdateIntegrationEventHandler>();
         }
+    }
+
+    public class APP_ID
+    {
+        public APP_ID() => Id = new Guid();
+        public Guid Id { get; set; }
     }
 }
