@@ -25,7 +25,7 @@ namespace Collaboration.Api.Hubs
             var threadsForDocument = _threadRepo.GetThreadsForDocument(docId);
             if (threadsForDocument != null)
             {
-                return _hubContext.Clients.All.InvokeAsync("ThreadsUpdate", new ThreadsDto(docId, threadsForDocument));
+                return _hubContext.Clients.All.InvokeAsync("GetThreads", new ThreadsDto(docId, threadsForDocument));
             }
             return Task.CompletedTask;
         }
@@ -35,7 +35,7 @@ namespace Collaboration.Api.Hubs
             var postsForThread = _postRepo.GetPostsForThread(threadId);
             if (postsForThread != null)
             {
-                return _hubContext.Clients.All.InvokeAsync("PostsUpdate", new PostsDto(threadId, postsForThread));
+                return _hubContext.Clients.All.InvokeAsync("GetPosts", new PostsDto(threadId, postsForThread));
             }
             return Task.CompletedTask;
         }
