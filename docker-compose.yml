@@ -8,29 +8,52 @@ services:
       - "5672:5672"
     networks: 
       - app-network
-  app1:
+
+  mssqldb:
+    image: "microsoft/mssql-server-linux"
+    build: 
+      context: ./Collaboration.Data
+      dockerfile: Dockerfile 
+    environment: 
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password123"
+    ports:
+      - "1433:1433"
+    networks:
+      - app-network
+    volumes:
+      - /var/opt/mssql
+
+  service1:
     build:
       context: ./Collaboration.Api
       dockerfile: Dockerfile
     depends_on:
       - broker
+      - mssqldb
     environment: 
-      - ASPNETCORE_URLS="http://*:5000"
+      ASPNETCORE_URLS: "http://*:5000"
+      SQLSERVER_HOST: mssqldb  
+
     networks:
     - app-network
-  app2:
+
+  service2:
     build:
       context: ./Collaboration.Api
       dockerfile: Dockerfile
     depends_on:
       - broker
+      - mssqldb
     environment:
-      - ASPNETCORE_URLS="http://*:5001"
+      ASPNETCORE_URLS: "http://*:5001"
+      SQLSERVER_HOST: mssqldb  
+
     networks:
     - app-network
 
   networks:
-    graph-network:
+    app-network:
       driver: bridge
 
   

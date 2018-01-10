@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Collaboration.Api.IntegrationEvents.EventHandling;
 using Collaboration.Api.IntegrationEvents.Events;
 using Collaboration.Messaging.Models;
@@ -39,9 +40,16 @@ namespace Collaboration.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup));
             services.AddMvc();
 
-            services.AddDbContext<ThreadContext>(o => o.UseInMemoryDatabase("Threads"));
+            var dbHostName = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
+            Console.WriteLine($"SQL Server Host: {dbHostName}");
+            var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
+            Console.WriteLine($"SQL Server Host: {dbPassword}");
+            var connString = $"Data Source={dbHostName};Initial Catalog=Collaboration;User ID=sa;Password={dbPassword};";
+            services.AddDbContext<ThreadContext>(options => options.UseSqlServer(connString));
+            
             services.AddTransient<ICollaborationService, CollaborationService>();
             services.AddTransient<IThreadRepository, ThreadRepository>();
             services.AddTransient<IPostRepository, PostRepository>();
@@ -53,7 +61,7 @@ namespace Collaboration.Api
                     HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME") ?? "rabbit",
                     UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest",
                     Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest",
-                    Uri = new Uri("amqp://guest@dev-030760:5672")
+                    Uri = new Uri("amqp://guest@localhost:5672")
                 };
                 return new RabbitMQConnection(factory);
             });

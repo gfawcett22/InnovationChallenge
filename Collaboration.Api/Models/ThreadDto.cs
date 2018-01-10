@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Collaboration.Core.Models;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Collaboration.Core.Models
+namespace Collaboration.Api.Models
 {
-    public class Thread
+    public class ThreadDto
     {
         public int ThreadId { get; set; }
         public int DocumentId { get; set; }
         public string Title { get; set; }
-        public ICollection<Post> Posts { get; set; }
+        IEnumerable<PostDto> Posts { get; set; }
     }
 }

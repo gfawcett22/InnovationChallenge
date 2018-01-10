@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace Collaboration.Api.Models
 {
-    public class PostsDto
+    public class PostDto
     {
-
-        public PostsDto(int threadId, IEnumerable<Post> posts)
-        {
-            ThreadId = threadId;
-            Posts = posts;
-        }
+        public int PostId { get; set; }
+        public string Content { get; set; }
+        public string UserName { get; set; }
+        public DateTime TimeStamp { get; set; }
         public int ThreadId { get; set; }
-        public IEnumerable<Post> Posts { get; set; }
     }
 }

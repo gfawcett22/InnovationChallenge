@@ -13,6 +13,10 @@ namespace Collaboration.Data.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Thread>()
+                .HasMany(t => t.Posts)
+                .WithOne(p => p.Thread);
+            
             base.OnModelCreating(modelBuilder);
         }
     }

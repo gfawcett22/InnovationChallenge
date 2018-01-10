@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace Collaboration.Api.Hubs
 {
@@ -13,33 +14,33 @@ namespace Collaboration.Api.Hubs
         private readonly IHubContext<CollaborationHub> _hubContext;
         private IThreadRepository _threadRepo;
         private IPostRepository _postRepo;
-        public CollaborationService(IHubContext<CollaborationHub> hubContext, IThreadRepository threadRepo, IPostRepository postRepo)
+        private IMapper _mapper;
+        public CollaborationService(IHubContext<CollaborationHub> hubContext, IThreadRepository threadRepo, IPostRepository postRepo, IMapper mapper)
         {
             _hubContext = hubContext;
             _threadRepo = threadRepo;
             _postRepo = postRepo;
+            _mapper = mapper;
         }
 
         public Task PushOutNewThreadsForDocument(int docId)
         {
             var threadsForDocument = _threadRepo.GetThreadsForDocument(docId);
-            if (threadsForDocument != null)
-            {
-                var threadsToReturn = Newtonsoft.Json.JsonConvert.SerializeObject(new ThreadsDto(docId, threadsForDocument));
-                return _hubContext.Clients.All.InvokeAsync("GetThreads", docId, threadsForDocument);
-            }
-            return Task.CompletedTask;
+            if (threadsForDocument == null) return Task.CompletedTask;
+            
+            var mappedThreads = _mapper.Map<IEnumerable<ThreadDto>>(threadsForDocument);
+            var threadsToReturn = Newtonsoft.Json.JsonConvert.SerializeObject(mappedThreads);
+            return _hubContext.Clients.All.InvokeAsync("GetThreads", threadsToReturn);
         }
 
         public Task PushOutPostsForThread(int threadId)
         {
             var postsForThread = _postRepo.GetPostsForThread(threadId);
-            if (postsForThread != null)
-            {
-                var postsToReturn = Newtonsoft.Json.JsonConvert.SerializeObject(new PostsDto(threadId, postsForThread));
-                return _hubContext.Clients.All.InvokeAsync("GetPosts", postsToReturn);
-            }
-            return Task.CompletedTask;
+            if (postsForThread == null) return Task.CompletedTask;
+            
+            var mappedPosts = _mapper.Map<IEnumerable<PostDto>>(postsForThread);
+            var postsToReturn = Newtonsoft.Json.JsonConvert.SerializeObject(mappedPosts);
+            return _hubContext.Clients.All.InvokeAsync("GetPosts", postsToReturn);
         }
     }
 
