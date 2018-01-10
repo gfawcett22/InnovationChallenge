@@ -43,11 +43,12 @@ namespace Collaboration.Api
             services.AddAutoMapper(typeof(Startup));
             services.AddMvc();
 
-            var dbHostName = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
-            Console.WriteLine($"SQL Server Host: {dbHostName}");
-            var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
-            Console.WriteLine($"SQL Server Host: {dbPassword}");
-            var connString = $"Data Source={dbHostName};Initial Catalog=Collaboration;User ID=sa;Password={dbPassword};";
+            //var dbHostName = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
+            //Console.WriteLine($"SQL Server Host: {dbHostName}");
+            //var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
+            //Console.WriteLine($"SQL Server Host: {dbPassword}");
+            //var connString = $"Data Source={dbHostName};Initial Catalog=Collaboration;User ID=sa;Password={dbPassword};";
+            var connString = "Server=dev-030760\\SQL2K14DEVELOPER;Database=Collaboration;User Id=hsi;Password=wstinol;MultipleActiveResultSets=true";
             services.AddDbContext<ThreadContext>(options => options.UseSqlServer(connString));
             
             services.AddTransient<ICollaborationService, CollaborationService>();
@@ -94,7 +95,7 @@ namespace Collaboration.Api
                 var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
                 var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
-                return new RabbitMQEventBus(rabbitMQPersistentConnection, eventBusSubcriptionsManager, iLifetimeScope, "collaboration");
+                return new RabbitMQEventBus(rabbitMQPersistentConnection, eventBusSubcriptionsManager, iLifetimeScope);
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();

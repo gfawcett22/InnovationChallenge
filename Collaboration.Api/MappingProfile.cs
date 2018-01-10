@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Collaboration.Api.Models;
 using Collaboration.Core.Models;
-using Thread = System.Threading.Thread;
 
 namespace Collaboration.Api
 {

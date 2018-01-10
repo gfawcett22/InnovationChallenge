@@ -6,6 +6,6 @@ namespace Collaboration.Api.Models
     {
         public int DocumentId { get; set; }
         public string Title { get; set; }
-        IEnumerable<PostToCreateDto> Posts { get; set; }
+        List<PostToCreateDto> Posts { get; set; }
     }
 }

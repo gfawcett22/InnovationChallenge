@@ -23,18 +23,16 @@ namespace Collaboration.Messaging.RabbitMQ
 
         private IRabbitMQConnection _connection;
         private readonly IEventBusSubscriptionsManager _subsManager;
-        IServiceProvider _sv;
         private IModel _consumerChannel;
         private string _queueName;
 
-        public RabbitMQEventBus(IRabbitMQConnection connection, IEventBusSubscriptionsManager subsManager, ILifetimeScope autofac, string queueName = "", IServiceProvider sv = null)
+        public RabbitMQEventBus(IRabbitMQConnection connection, IEventBusSubscriptionsManager subsManager, ILifetimeScope autofac)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
-            _queueName = queueName;
+            _queueName = Guid.NewGuid().ToString();
             _autofac = autofac;
             _consumerChannel = CreateConsumerChannel();
-            _sv = sv;
             _subsManager.OnEventRemoved += SubsManager_OnEventRemoved;
         }
 
@@ -73,7 +71,7 @@ namespace Collaboration.Messaging.RabbitMQ
                     .Name;
 
                 channel.ExchangeDeclare(exchange: BROKER_NAME,
-                                    type: "direct");
+                                    type: "fanout");
 
                 var message = JsonConvert.SerializeObject(@event);
                 var body = Encoding.UTF8.GetBytes(message);
@@ -139,7 +137,7 @@ namespace Collaboration.Messaging.RabbitMQ
             var channel = _connection.CreateModel();
 
             channel.ExchangeDeclare(exchange: BROKER_NAME,
-                                 type: "direct");
+                                 type: "fanout");
 
             channel.QueueDeclare(queue: _queueName,
                                  durable: true,                                 
@@ -153,7 +151,6 @@ namespace Collaboration.Messaging.RabbitMQ
             {
                 var eventName = ea.RoutingKey;
                 var message = Encoding.UTF8.GetString(ea.Body);
-
                 await ProcessEvent(eventName, message);
             };
 

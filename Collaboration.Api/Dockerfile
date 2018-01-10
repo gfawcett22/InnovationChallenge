@@ -4,4 +4,4 @@ WORKDIR /app
 
 COPY publish /app
 
-ENTRYPOINT ["dotnet", "Collaboration.Api"]
+ENTRYPOINT ["dotnet", "Collaboration.Api.dll"]

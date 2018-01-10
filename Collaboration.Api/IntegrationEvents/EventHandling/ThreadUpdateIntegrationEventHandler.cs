@@ -18,7 +18,8 @@ namespace Collaboration.Api.IntegrationEvents.EventHandling
 
         public async Task Handle(ThreadUpdateIntegrationEvent @event)
         {
-            await _collaborationService.PushOutNewThreadsForDocument(@event.DocumentId);
+            await Task.Run(() => Console.WriteLine("ThreadUpdate event"));
+            //await _collaborationService.PushOutNewThreadsForDocument(@event.DocumentId);
         }
     }
 }

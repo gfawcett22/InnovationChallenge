@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services: 
   broker:
@@ -7,7 +7,7 @@ services:
     ports:
       - "5672:5672"
     networks: 
-      - app-network
+      - appnet
 
   mssqldb:
     image: "microsoft/mssql-server-linux"
@@ -20,7 +20,7 @@ services:
     ports:
       - "1433:1433"
     networks:
-      - app-network
+      - appnet
     volumes:
       - /var/opt/mssql
 
@@ -31,29 +31,31 @@ services:
     depends_on:
       - broker
       - mssqldb
+    ports:
+      - "5000:5000"
     environment: 
       ASPNETCORE_URLS: "http://*:5000"
       SQLSERVER_HOST: mssqldb  
-
     networks:
-    - app-network
+    - appnet
 
   service2:
     build:
       context: ./Collaboration.Api
       dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
     depends_on:
       - broker
       - mssqldb
     environment:
       ASPNETCORE_URLS: "http://*:5001"
-      SQLSERVER_HOST: mssqldb  
-
+      SQLSERVER_HOST: mssqldb 
     networks:
-    - app-network
+    - appnet
 
-  networks:
-    app-network:
-      driver: bridge
+networks:
+  appnet:
+    driver: bridge
 
   

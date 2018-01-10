@@ -14,7 +14,7 @@ using Collaboration.Messaging.Models.Abstractions;
 
 namespace Collaboration.Api.Controllers
 {
-    [Route("api/threads")]
+    [Route("/api/[controller]")]
     public class ThreadsController : Controller
     {
         private IThreadRepository _threadRepo;
@@ -57,22 +57,12 @@ namespace Collaboration.Api.Controllers
             return threadsToReturn;
         }
 
-        // Get all posts for a thread
-        [HttpGet]
-        [Route("{threadId:int}/posts")]
-        public IEnumerable<PostDto> GetPosts(int threadId)
-        {
-            var postsFromRepo = _postRepo.GetPostsForThread(threadId);
-            var mappedPosts = _mapper.Map<IEnumerable<PostDto>>(postsFromRepo);
-            return mappedPosts;
-        }
-
-        [HttpPost]
-        public IActionResult CreateThread(ThreadToCreateDto thread)
+        [HttpPost("{docId}")]
+        public IActionResult CreateThread(int docId, [FromBody] ThreadToCreateDto thread)
         {
             if (thread == null) return BadRequest();
+            thread.DocumentId = docId;
             var mappedThread = _mapper.Map<Thread>(thread);
-            mappedThread.Posts = new List<Post>();
 
             _threadRepo.AddThread(mappedThread);
             if (!_threadRepo.Save()) return StatusCode(500);
@@ -80,24 +70,9 @@ namespace Collaboration.Api.Controllers
             var eventMessage = new ThreadUpdateIntegrationEvent(thread.DocumentId);
             _eventBus.Publish(eventMessage);
             
-            return StatusCode(200);
+            return StatusCode(201);
         }
-
-        // Create a post on an existing thread
-        [HttpPost("{threadId:int}/posts")]
-        public IActionResult CreatePost([FromBody]int threadID, PostToCreateDto post)
-        {
-            if (!_threadRepo.ThreadExists(threadID)) return BadRequest();
-            var mappedPost = _mapper.Map<Post>(post);
-            mappedPost.Thread = _threadRepo.GetThread(threadID);
-            _postRepo.AddPost(mappedPost);
-            if (!_postRepo.Save()) return StatusCode(500);
-
-            var eventMessage = new PostUpdateIntegrationEvent(threadID);
-            _eventBus.Publish(eventMessage);
-
-            return StatusCode(200);
-        }
+        
         
         /*
          * ADVANCED FUNCTIONALITY:
