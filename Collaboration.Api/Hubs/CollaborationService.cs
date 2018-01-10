@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Collaboration.Api.Hubs
 {
-    public class CollaborationService: ICollaborationService
+    public class CollaborationService : ICollaborationService
     {
         private readonly IHubContext<CollaborationHub> _hubContext;
         private IThreadRepository _threadRepo;
@@ -32,13 +32,10 @@ namespace Collaboration.Api.Hubs
 
         public Task PushOutPostsForThread(int threadId)
         {
-            if (_threadRepo.ThreadExists(threadId))
+            var postsForThread = _postRepo.GetPostsForThread(threadId);
+            if (postsForThread != null)
             {
-                var postsForThread = _postRepo.GetPostsForThread(threadId);
-                if (postsForThread != null)
-                {
-                    return _hubContext.Clients.All.InvokeAsync("PostsUpdate", new PostsDto(threadId, postsForThread));
-                }
+                return _hubContext.Clients.All.InvokeAsync("PostsUpdate", new PostsDto(threadId, postsForThread));
             }
             return Task.CompletedTask;
         }
