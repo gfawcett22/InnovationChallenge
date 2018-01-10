@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Collaboration.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     public class ValuesController : Controller
     {
         private IEventBus _eventBus;
@@ -17,7 +17,7 @@ namespace Collaboration.Api.Controllers
             _eventBus = eventBus;
         }
         // GET api/values
-        [HttpGet]
+        [HttpGet("threads")]
         public IEnumerable<string> Get()
         {
             var eventMessage = new ThreadUpdateIntegrationEvent(1, 2, "This is a new Thread", null);
@@ -28,7 +28,7 @@ namespace Collaboration.Api.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("/post")]
+        [HttpGet("posts")]
         public string Get(int id)
         {
             var eventMessage = new PostUpdateIntegrationEvent(56, 2, "This is a post", "Garron", DateTime.Now);
