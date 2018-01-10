@@ -43,10 +43,10 @@ namespace Collaboration.Api
             services.AddAutoMapper(typeof(Startup));
             services.AddMvc();
 
-            //var dbHostName = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
-            //Console.WriteLine($"SQL Server Host: {dbHostName}");
-            //var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
-            //Console.WriteLine($"SQL Server Host: {dbPassword}");
+            // var dbHostName = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
+            // Console.WriteLine($"SQL Server Host: {dbHostName}");
+            // var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
+            // Console.WriteLine($"SQL Server Host: {dbPassword}");
             //var connString = $"Data Source={dbHostName};Initial Catalog=Collaboration;User ID=sa;Password={dbPassword};";
             var connString = "Server=dev-030760\\SQL2K14DEVELOPER;Database=Collaboration;User Id=hsi;Password=wstinol;MultipleActiveResultSets=true";
             services.AddDbContext<ThreadContext>(options => options.UseSqlServer(connString));
@@ -62,7 +62,7 @@ namespace Collaboration.Api
                     HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME") ?? "rabbit",
                     UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest",
                     Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest",
-                    Uri = new Uri("amqp://guest@localhost:5672")
+                    Uri = new Uri("amqp://guest@dev-030760:5672")
                 };
                 return new RabbitMQConnection(factory);
             });
