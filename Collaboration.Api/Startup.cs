@@ -37,18 +37,16 @@ namespace Collaboration.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Startup));
             services.AddMvc();
 
-            // var dbHostName = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
-            // Console.WriteLine($"SQL Server Host: {dbHostName}");
-            // var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
-            // Console.WriteLine($"SQL Server Host: {dbPassword}");
-            //var connString = $"Data Source={dbHostName};Initial Catalog=Collaboration;User ID=sa;Password={dbPassword};";
-            var connString = "Server=dev-030760\\SQL2K14DEVELOPER;Database=Collaboration;User Id=hsi;Password=wstinol;MultipleActiveResultSets=true";
+            var dbHostName = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
+            Console.WriteLine($"SQL Server Host: {dbHostName}");
+            var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
+            Console.WriteLine($"SQL Server Host: {dbPassword}");
+            var connString = $"Data Source={dbHostName};Initial Catalog=Collaboration;User ID=sa;Password={dbPassword};";
             services.AddDbContext<ThreadContext>(options => options.UseSqlServer(connString));
             
             services.AddTransient<ICollaborationService, CollaborationService>();
@@ -62,7 +60,7 @@ namespace Collaboration.Api
                     HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME") ?? "rabbit",
                     UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest",
                     Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest",
-                    Uri = new Uri("amqp://guest@dev-030760:5672")
+                    Uri = new Uri("amqp://guest@rabbit:5672")
                 };
                 return new RabbitMQConnection(factory);
             });
@@ -105,8 +103,7 @@ namespace Collaboration.Api
             services.AddTransient<PostUpdateIntegrationEventHandler>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider sv)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider sv, IApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -123,6 +120,7 @@ namespace Collaboration.Api
             });
 
             ConfigureEventBus(app);
+            lifetime.ApplicationStopping.Register(OnShutdown);
             using (var db = sv.GetService<ThreadContext>())
             {
                 ThreadSeeder.Seed(db);
@@ -136,6 +134,11 @@ namespace Collaboration.Api
             // Subscribe to events and put the handler here
             eventBus.Subscribe<ThreadUpdateIntegrationEvent, ThreadUpdateIntegrationEventHandler>();
             eventBus.Subscribe<PostUpdateIntegrationEvent, PostUpdateIntegrationEventHandler>();
+        }
+
+        private void OnShutdown()
+        {
+            
         }
     }
 }
