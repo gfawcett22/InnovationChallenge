@@ -41,6 +41,7 @@ namespace Collaboration.Api
             var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
             Console.WriteLine($"SQL Server Host: {dbPassword}");
             var connString = $"Data Source={dbHostName};Initial Catalog=Collaboration;User ID=sa;Password={dbPassword};";
+            //var connString = "Data Source=dev-030760\\SQL2K14DEVELOPER;Initial Catalog=Collaboration;User ID=hsi;Password=wstinol";
             services.AddDbContext<ThreadContext>(options => options.UseSqlServer(connString));
             
             services.AddTransient<ICollaborationService, CollaborationService>();

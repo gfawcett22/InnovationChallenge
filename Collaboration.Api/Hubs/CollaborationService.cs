@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Collaboration.Core.Models;
 
 namespace Collaboration.Api.Hubs
 {
@@ -40,7 +41,7 @@ namespace Collaboration.Api.Hubs
             var postsForThread = _postRepo.GetPostsForThread(threadId);
             if (postsForThread == null) return Task.CompletedTask;
             
-            var mappedPosts = _mapper.Map<IEnumerable<PostDto>>(postsForThread);
+            var mappedPosts = _mapper.Map<IEnumerable<Post>, List<PostDto>>(postsForThread);
             var postsToReturn = JsonConvert.SerializeObject(mappedPosts, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return _hubContext.Clients.All.InvokeAsync("GetPosts", postsToReturn);
         }
