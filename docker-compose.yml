@@ -22,6 +22,17 @@ services:
     volumes:
       - /var/opt/mssql
 
+  data:
+    build:
+      context: ./Collaboration.Data
+      dockerfile: Dockerfile
+    depends_on:
+      - mssqldb
+    environment: 
+      SQLSERVER_HOST: mssqldb
+    networks:
+    - appnet
+  
   service1:
     build:
       context: ./Collaboration.Api
@@ -31,6 +42,20 @@ services:
       - mssqldb
     ports:
       - "5000:80"
+    environment: 
+      SQLSERVER_HOST: mssqldb  
+    networks:
+    - appnet
+
+  service2:
+    build:
+      context: ./Collaboration.Api
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbit
+      - mssqldb
+    ports:
+      - "5001:80"
     environment: 
       SQLSERVER_HOST: mssqldb  
     networks:

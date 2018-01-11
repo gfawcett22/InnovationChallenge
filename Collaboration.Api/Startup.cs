@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -16,15 +13,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.SignalR;
 using Collaboration.Api.Hubs;
 using RabbitMQ.Client;
 using Collaboration.Data.Repositories;
 using Collaboration.Core.Data;
 using Collaboration.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Collaboration.Data.Seed;
 
 namespace Collaboration.Api
 {
@@ -120,11 +114,6 @@ namespace Collaboration.Api
             });
 
             ConfigureEventBus(app);
-            lifetime.ApplicationStopping.Register(OnShutdown);
-            using (var db = sv.GetService<ThreadContext>())
-            {
-                ThreadSeeder.Seed(db);
-            }
         }
 
         private void ConfigureEventBus(IApplicationBuilder app)
@@ -136,9 +125,5 @@ namespace Collaboration.Api
             eventBus.Subscribe<PostUpdateIntegrationEvent, PostUpdateIntegrationEventHandler>();
         }
 
-        private void OnShutdown()
-        {
-            
-        }
     }
 }
