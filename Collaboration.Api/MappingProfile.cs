@@ -11,7 +11,8 @@ namespace Collaboration.Api
             CreateMap<Thread, ThreadDto>();
             CreateMap<ThreadToUpdateDto, Thread>();
             CreateMap<ThreadToCreateDto, Thread>();
-            CreateMap<Post, PostDto>();
+            CreateMap<Post, PostDto>()
+                .ForMember(pd => pd.ThreadId, opt => opt.MapFrom(p => p.Thread.ThreadId));
             CreateMap<PostToCreateDto, Post>();
             CreateMap<PostToUpdateDto, Post>();
         }

@@ -155,7 +155,7 @@ namespace Collaboration.Messaging.RabbitMQ
             };
 
             channel.BasicConsume(queue: _queueName,
-                                 autoAck: false,
+                                 autoAck: true,
                                  consumer: consumer);
 
             channel.CallbackException += (sender, ea) =>
@@ -180,6 +180,7 @@ namespace Collaboration.Messaging.RabbitMQ
                         var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
                         var handler = scope.ResolveOptional(subscription.HandlerType);
                         var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
+                        // execute the Handle method on the IIntegrationEventHandlerType
                         await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
                     }
                 }

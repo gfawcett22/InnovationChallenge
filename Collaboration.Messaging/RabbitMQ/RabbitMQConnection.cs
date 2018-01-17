@@ -1,10 +1,12 @@
 ﻿using Collaboration.Messaging.RabbitMQ.Abstractions;
+using Polly;
+using Polly.Retry;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace Collaboration.Messaging.RabbitMQ
 {
@@ -13,6 +15,8 @@ namespace Collaboration.Messaging.RabbitMQ
         private IConnectionFactory _connectionFactory { get; set; }
         IConnection _connection;
         bool _disposed;
+
+        object sync_root = new object();
 
         public RabbitMQConnection(IConnectionFactory connectionFactory)
         {
@@ -29,8 +33,35 @@ namespace Collaboration.Messaging.RabbitMQ
 
         public bool TryConnect()
         {
-            _connection = _connectionFactory.CreateConnection();
-            return IsConnected;
+            lock (sync_root)
+            {
+                var policy = RetryPolicy.Handle<SocketException>()
+                    .Or<BrokerUnreachableException>()
+                    .WaitAndRetry(10, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+                );
+
+                policy.Execute(() =>
+                {
+                    _connection = _connectionFactory
+                          .CreateConnection();
+                });
+
+                if (IsConnected)
+                {
+                    _connection.ConnectionShutdown += OnConnectionShutdown;
+                    _connection.CallbackException += OnCallbackException;
+                    _connection.ConnectionBlocked += OnConnectionBlocked;
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         public IModel CreateModel()
@@ -57,6 +88,27 @@ namespace Collaboration.Messaging.RabbitMQ
             {
                 throw ex; 
             }
+        }
+
+        private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
+        {
+            if (_disposed) return;
+
+            TryConnect();
+        }
+
+        void OnCallbackException(object sender, CallbackExceptionEventArgs e)
+        {
+            if (_disposed) return;
+
+            TryConnect();
+        }
+
+        void OnConnectionShutdown(object sender, ShutdownEventArgs reason)
+        {
+            if (_disposed) return;
+
+            TryConnect();
         }
     }
 }

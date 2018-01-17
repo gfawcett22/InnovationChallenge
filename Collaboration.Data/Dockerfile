@@ -1,3 +1,7 @@
-FROM microsoft/mssql-server-linux
+FROM microsoft/aspnetcore
 
-EXPOSE 1433
+WORKDIR /app
+
+COPY publish /app
+
+ENTRYPOINT [ "dotnet", "Collaboration.Data.dll" ]

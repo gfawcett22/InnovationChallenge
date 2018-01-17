@@ -9,9 +9,7 @@ namespace Collaboration.Data.Seed
     {
         public static void Seed(ThreadContext db)
         {
-            db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
-            
             //Threads
             var threads = new List<Thread>
             {

@@ -21,7 +21,8 @@ namespace Collaboration.Data.Repositories
 
         public Post GetPost(int postId) => _context.Posts.FirstOrDefault(p => p.PostId == postId);
 
-        public IEnumerable<Post> GetPostsForThread(int threadId) => _context.Posts.Where(p => p.Thread.ThreadId == threadId);
+        public IEnumerable<Post> GetPostsForThread(int threadId) => _context.Posts.Where(p => p.Thread.ThreadId == threadId)
+                                                                        .Include(p => p.Thread);
 
         public void AddPost(Post post)
         {
