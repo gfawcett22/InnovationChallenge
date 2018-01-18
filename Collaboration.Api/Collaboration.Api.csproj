@@ -12,8 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Http" Version="0.0.1-alpha" />
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
@@ -23,5 +23,9 @@
     <ProjectReference Include="..\Collaboration.Messaging\Collaboration.Messaging.csproj" />
     <ProjectReference Include="..\Collaboration.Core\Collaboration.Core.csproj" />
     <ProjectReference Include="..\Collaboration.Data\Collaboration.Data.csproj" />
+    <ProjectReference Include="..\HealthChecks\src\Microsoft.AspNetCore.HealthChecks\Microsoft.AspNetCore.HealthChecks.csproj" />
+    <ProjectReference Include="..\HealthChecks\src\Microsoft.Extensions.HealthChecks.SqlServer\Microsoft.Extensions.HealthChecks.SqlServer.csproj" />
+    <ProjectReference Include="..\HealthChecks\src\Microsoft.Extensions.HealthChecks\Microsoft.Extensions.HealthChecks.csproj" />
+    <ProjectReference Include="..\WebHostCustomizations\WebHost.Customization\WebHost.Customization.csproj" />
   </ItemGroup>
 </Project>

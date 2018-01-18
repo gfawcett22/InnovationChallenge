@@ -19,6 +19,8 @@ using Collaboration.Data.Repositories;
 using Collaboration.Core.Data;
 using Collaboration.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Collaboration.Api
 {
@@ -36,14 +38,21 @@ namespace Collaboration.Api
             services.AddAutoMapper(typeof(Startup));
             services.AddMvc();
 
-            var dbHostName = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
-            Console.WriteLine($"SQL Server Host: {dbHostName}");
-            var dbPassword = Environment.GetEnvironmentVariable("SQLSERVER_SA_PASSWORD") ?? "Password123";
-            Console.WriteLine($"SQL Server Host: {dbPassword}");
-            var connString = $"Data Source={dbHostName};Initial Catalog=Collaboration;User ID=sa;Password={dbPassword};";
-            //var connString = "Data Source=dev-030760\\SQL2K14DEVELOPER;Initial Catalog=Collaboration;User ID=hsi;Password=wstinol";
-            services.AddDbContext<ThreadContext>(options => options.UseSqlServer(connString));
-            
+            services.AddDbContext<ThreadContext>(options =>
+            {
+                options.UseSqlServer(Configuration["ConnectionString"],
+                                     sqlServerOptionsAction: sqlOptions =>
+                                     {
+                                         sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                                         //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
+                                         sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                                     });
+
+                // Changing default behavior when client evaluation occurs to throw. 
+                // Default in EF Core would be to log a warning when client evaluation is performed.
+                options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
+            });
+
             services.AddTransient<ICollaborationService, CollaborationService>();
             services.AddTransient<IThreadRepository, ThreadRepository>();
             services.AddTransient<IPostRepository, PostRepository>();
@@ -52,24 +61,31 @@ namespace Collaboration.Api
             {
                 var factory = new ConnectionFactory()
                 {
-                    HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME") ?? "rabbit",
-                    UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "guest",
-                    Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "guest",
-                    Uri = new Uri("amqp://guest@rabbit:5672")
+                    HostName = Configuration["EventBusConnection"]
                 };
+
+                if (!string.IsNullOrEmpty(Configuration["EventBusUserName"]))
+                {
+                    factory.UserName = Configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(Configuration["EventBusPassword"]))
+                {
+                    factory.Password = Configuration["EventBusPassword"];
+                }
                 return new RabbitMQConnection(factory);
             });
 
             RegisterEventBus(services);
 
             services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
+                {
+                    options.AddPolicy("CorsPolicy",
+                        builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+                });
 
             services.AddSignalR();
 

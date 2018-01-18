@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: externalcfg
+  labels:
+    app: innovation-challenge  
+data:
+  CollaborationBus: rabbitmq
+  CatalogBus: rabbitmq
+  CatalogSqlDb: Server=sql-data;Initial Catalog=Collaboration;User Id=sa;Password=Pass@word;
+  
