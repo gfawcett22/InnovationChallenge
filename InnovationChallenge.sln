@@ -19,10 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Extensions.Health
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Extensions.HealthChecks.SqlServer", "HealthChecks\src\Microsoft.Extensions.HealthChecks.SqlServer\Microsoft.Extensions.HealthChecks.SqlServer.csproj", "{C0457E57-67A2-4F6E-BD21-4D2CCE82AC5D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebHost", "WebHost", "{412516CD-506E-4C16-BED3-63F4740BE6EC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebHost.Customization", "WebHostCustomizations\WebHost.Customization\WebHost.Customization.csproj", "{6B38C4EA-C7DE-466E-B0A2-C1105E7DC203}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,10 +53,6 @@ Global
 		{C0457E57-67A2-4F6E-BD21-4D2CCE82AC5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0457E57-67A2-4F6E-BD21-4D2CCE82AC5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0457E57-67A2-4F6E-BD21-4D2CCE82AC5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B38C4EA-C7DE-466E-B0A2-C1105E7DC203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B38C4EA-C7DE-466E-B0A2-C1105E7DC203}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B38C4EA-C7DE-466E-B0A2-C1105E7DC203}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B38C4EA-C7DE-466E-B0A2-C1105E7DC203}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,7 +61,6 @@ Global
 		{5B5CDCEC-5836-471A-BAD5-231DD6C52CCA} = {193BA081-F74B-4949-8336-05F428A44C09}
 		{F0447F09-163A-4435-BFFC-FCF22D2A33A1} = {193BA081-F74B-4949-8336-05F428A44C09}
 		{C0457E57-67A2-4F6E-BD21-4D2CCE82AC5D} = {193BA081-F74B-4949-8336-05F428A44C09}
-		{6B38C4EA-C7DE-466E-B0A2-C1105E7DC203} = {412516CD-506E-4C16-BED3-63F4740BE6EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5AC92BD-FE53-4E3D-AB2A-329557F7037C}
