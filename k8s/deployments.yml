@@ -1,20 +1,4 @@
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: innovation-challenge
-    component: collaboration
-  name: collaboration
-spec:
-  ports:
-  - port: 80
-  selector:
-    app: innovation-challenge
-    component: collaboration
-
----
-
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: collaboration
@@ -23,12 +7,12 @@ spec:
   template:
     metadata:
       labels:
-        app: innovation-challenge
+        app: innovationchallenge
         component: collaboration
     spec:
       containers:
       - name: collaboration
-        image: innovation-challenge/collaboration.api
+        image: innovationchallenge/collaboration.api
         imagePullPolicy: Always
         env:
         - name: ConnectionString

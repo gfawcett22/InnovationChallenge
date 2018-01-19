@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: innovation-challenge
+    app: innovationchallenge
     component: rabbitmq
   name: rabbitmq
 spec:
@@ -14,7 +14,7 @@ spec:
 
 ---
 
-apiVersion: v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: rabbitmq
@@ -22,7 +22,7 @@ spec:
   template:
     metadata:
       labels:
-        app: innovation-challenge
+        app: innovationchallenge
         component: rabbitmq
     spec:
       containers:

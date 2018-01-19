@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: externalcfg
   labels:
-    app: innovation-challenge  
+    app: innovationchallenge  
 data:
   CollaborationBus: rabbitmq
   CatalogBus: rabbitmq

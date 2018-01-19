@@ -2,21 +2,20 @@ version: '2'
 
 services: 
   rabbit:
-    image: "rabbitmq:management"
+    image: "rabbitmq:3"
     hostname: rabbit
     ports:
-      - "15672:15672"
       - "5672:5672"
     networks: 
       - appnet
 
-  mssqldb:
+  sql.data:
     image: "microsoft/mssql-server-linux"
     environment: 
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Password123"
+      SA_PASSWORD: "Pass@word"
     ports:
-      - "1433:1433"
+      - "5433:1433"
     networks:
       - appnet
     volumes:
@@ -27,37 +26,21 @@ services:
       context: ./Collaboration.Data
       dockerfile: Dockerfile
     depends_on:
-      - mssqldb
-    environment: 
-      SQLSERVER_HOST: mssqldb
+      - sql.data
     networks:
     - appnet
   
-  service1:
+  collaboration.api:
     build:
       context: ./Collaboration.Api
       dockerfile: Dockerfile
     depends_on:
       - rabbit
-      - mssqldb
+      - sql.data
     ports:
       - "5000:80"
-    environment: 
-      SQLSERVER_HOST: mssqldb  
-    networks:
-    - appnet
-
-  service2:
-    build:
-      context: ./Collaboration.Api
-      dockerfile: Dockerfile
-    depends_on:
-      - rabbit
-      - mssqldb
-    ports:
-      - "5001:80"
-    environment: 
-      SQLSERVER_HOST: mssqldb  
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
     networks:
     - appnet
 

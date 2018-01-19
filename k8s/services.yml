@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: innovationchallenge
+    component: collaboration
+  name: collaboration
+spec:
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: innovationchallenge
+    component: collaboration
+  type: LoadBalancer
+
+

@@ -21,6 +21,7 @@ using Collaboration.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.HealthChecks;
 
 namespace Collaboration.Api
 {
@@ -38,21 +39,18 @@ namespace Collaboration.Api
             services.AddAutoMapper(typeof(Startup));
             services.AddMvc();
 
-            services.AddDbContext<ThreadContext>(options =>
+            services.AddDbContext<ThreadContext>(options => options.UseSqlServer(Configuration["ConnectionString"]));
+            
+            services.AddHealthChecks(checks =>
             {
-                options.UseSqlServer(Configuration["ConnectionString"],
-                                     sqlServerOptionsAction: sqlOptions =>
-                                     {
-                                         sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-                                         //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
-                                         sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                                     });
-
-                // Changing default behavior when client evaluation occurs to throw. 
-                // Default in EF Core would be to log a warning when client evaluation is performed.
-                options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
+                var minutes = 1;
+                if (int.TryParse(Configuration["HealthCheck:Timeout"], out var minutesParsed))
+                {
+                    minutes = minutesParsed;
+                }
+                checks.AddSqlCheck("Collaboration", Configuration["ConnectionString"], TimeSpan.FromMinutes(minutes));
             });
-
+            
             services.AddTransient<ICollaborationService, CollaborationService>();
             services.AddTransient<IThreadRepository, ThreadRepository>();
             services.AddTransient<IPostRepository, PostRepository>();
