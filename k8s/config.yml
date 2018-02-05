@@ -6,6 +6,5 @@ metadata:
     app: innovationchallenge  
 data:
   CollaborationBus: rabbitmq
-  CatalogBus: rabbitmq
-  CatalogSqlDb: Server=sql-data;Initial Catalog=Collaboration;User Id=sa;Password=Pass@word;
+  CollaborationSqlDb: Server=sql-data;Initial Catalog=Collaboration;User Id=sa;Password=Pass@word;
   

@@ -59,18 +59,20 @@ namespace Collaboration.Api
             {
                 var factory = new ConnectionFactory()
                 {
-                    HostName = Configuration["EventBusConnection"]
+                    HostName = "rabbitmq",
+                    UserName = "guest",
+                    Password = "guest"
                 };
 
-                if (!string.IsNullOrEmpty(Configuration["EventBusUserName"]))
-                {
-                    factory.UserName = Configuration["EventBusUserName"];
-                }
+                // if (!string.IsNullOrEmpty(Configuration["EventBusUserName"]))
+                // {
+                //     factory.UserName = Configuration["EventBusUserName"];
+                // }
 
-                if (!string.IsNullOrEmpty(Configuration["EventBusPassword"]))
-                {
-                    factory.Password = Configuration["EventBusPassword"];
-                }
+                // if (!string.IsNullOrEmpty(Configuration["EventBusPassword"]))
+                // {
+                //     factory.Password = Configuration["EventBusPassword"];
+                // }
                 return new RabbitMQConnection(factory);
             });
 
@@ -98,7 +100,6 @@ namespace Collaboration.Api
             services.AddSingleton<IEventBus, RabbitMQEventBus>(sp =>
             {
                 var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQConnection>();
-                var logger = sp.GetRequiredService<ILogger<RabbitMQEventBus>>();
                 var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
                 var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
@@ -129,6 +130,9 @@ namespace Collaboration.Api
             });
 
             ConfigureEventBus(app);
+
+            var db = sv.GetService<ThreadContext>();
+            db.Database.EnsureCreated();
         }
 
         private void ConfigureEventBus(IApplicationBuilder app)

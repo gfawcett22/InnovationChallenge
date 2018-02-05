@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seeder
+spec:
+  template:
+    spec:
+      containers:
+      - name: seeder
+        image: gfawcett22/collaboration.data
+        env:
+        - name: ConnectionString
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: CollaborationSqlDb
+      restartPolicy: Never

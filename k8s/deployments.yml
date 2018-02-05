@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: collaboration
 spec:
-  paused: true
   template:
     metadata:
       labels:
@@ -12,16 +11,14 @@ spec:
     spec:
       containers:
       - name: collaboration
-        image: innovationchallenge/collaboration.api
+        image: gfawcett22/collaboration.api
         imagePullPolicy: Always
         env:
         - name: ConnectionString
           valueFrom:
            configMapKeyRef:
              name: externalcfg
-             key: CollaborationSQLDB
-        - name: OrchestratorType
-          value: 'K8S'
+             key: CollaborationSqlDb
         ports:
         - containerPort: 80
         readinessProbe:
@@ -38,5 +35,4 @@ spec:
             scheme: HTTP 
           initialDelaySeconds: 60
           periodSeconds: 10                      
-      imagePullSecrets:
-      - name: registry-key
+
