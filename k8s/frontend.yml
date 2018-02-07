@@ -3,30 +3,31 @@ kind: Service
 metadata:
   labels:
     app: innovationchallenge
-    component: rabbitmq
-  name: rabbitmq
+    component: frontend
+  name: frontend
 spec:
   ports:
-  - port: 5672
+  - port: 80
   selector:
     app: innovationchallenge
-    component: rabbitmq
+    component: frontend
+  type: LoadBalancer
 
 ---
 
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: rabbitmq
+  name: frontend
 spec:
   template:
     metadata:
       labels:
         app: innovationchallenge
-        component: rabbitmq
+        component: frontend
     spec:
       containers:
-      - name: rabbitmq
-        image: rabbitmq:3
+      - name: frontend
+        image: gfawcett22/rt-collab
         ports:
-        - containerPort: 5672
+        - containerPort: 80

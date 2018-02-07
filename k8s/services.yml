@@ -11,6 +11,7 @@ spec:
   selector:
     app: innovationchallenge
     component: collaboration
-  type: LoadBalancer
+  sessionAffinity: ClientIP
+  type: NodePort
 
 
