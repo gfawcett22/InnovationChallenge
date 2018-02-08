@@ -7,11 +7,10 @@ metadata:
   name: collaboration
 spec:
   ports:
-  - port: 80
+  - port: 5000
+    targetPort: 80
   selector:
     app: innovationchallenge
     component: collaboration
-  sessionAffinity: ClientIP
-  type: NodePort
-
+  # type: NodePort
 

@@ -113,11 +113,15 @@ namespace Collaboration.Api
             services.AddTransient<PostUpdateIntegrationEventHandler>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider sv, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider sv, ILoggerFactory logger, IApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else {
+                logger.AddConsole();
+                logger.AddDebug();
             }
             app.UseCors("CorsPolicy");
 
