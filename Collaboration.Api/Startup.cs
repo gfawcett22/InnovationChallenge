@@ -128,6 +128,7 @@ namespace Collaboration.Api
             app.UseMvc();
 
             app.UseStaticFiles();
+            app.UseWebSockets();
             app.UseSignalR(routes =>
             {
                 routes.MapHub<CollaborationHub>("CollaborationHub");

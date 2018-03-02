@@ -12,5 +12,5 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: ingress-nginx
-          servicePort: 80
+          serviceName: collaboration
+          servicePort: 5000

@@ -13,3 +13,6 @@ spec:
   - name: http
     port: 80
     targetPort: http
+  - name: service
+    port: 5000
+    targetPort: service
